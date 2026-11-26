@@ -1,1 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GoPlaces — Chrome Web Store Asset Resizer</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 32px auto; padding: 0 16px; background: #f8fafc; color: #0f172a; }
+    h1 { font-size: 20px; margin-bottom: 6px; }
+    p { color: #475569; font-size: 14px; margin-bottom: 16px; }
+    .picker-bar { background: #eff6ff; border: 1px dashed #2563eb; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+    .grid { display: grid; gap: 16px; }
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    canvas { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #e2e8f0; background: #f1f5f9; }
+    .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .btn { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-weight: 600; cursor: pointer; text-decoration: none; font-size: 13px; display: inline-block; }
+    .btn:hover { background: #1d4ed8; }
+    .btn.disabled { opacity: 0.45; pointer-events: none; }
+    .status { font-size: 12px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <h1>Chrome Web Store Asset Resizer</h1>
+  <p>Center-crops and scales your store assets to exact Chrome Web Store dimensions (24-bit PNG, no alpha).</p>
 
+  <div class="picker-bar">
+    <div>
+      <strong>Select your 3 images from <code>store-assets/</code></strong>
+      <div class="status">Pick <code>promo-small.jpg</code>, <code>screenshot-1-showcase.jpg</code>, and <code>screenshot-2-newtab.jpg</code></div>
+    </div>
+    <label class="btn">
+      Choose Images
+      <input id="file-input" type="file" accept="image/*" multiple style="display: none;" />
+    </label>
+  </div>
+
+  <div id="grid" class="grid"></div>
+
+  <script>
+    const TARGETS = [
+      { key: "promo-small", src: "promo-small.jpg", out: "promo-small-440x280.png", w: 440, h: 280, label: "Small Promo Tile (440 × 280)" },
+      { key: "screenshot-1", src: "screenshot-1-showcase.jpg", out: "screenshot-1-1280x800.png", w: 1280, h: 800, label: "Screenshot 1 — Popup & Go Links (1280 × 800)" },
+      { key: "screenshot-2", src: "screenshot-2-newtab.jpg", out: "screenshot-2-1280x800.png", w: 1280, h: 800, label: "Screenshot 2 — Scenic New Tab Launcher (1280 × 800)" },
+    ];
+
+    const grid = document.getElementById("grid");
+    const fileInput = document.getElementById("file-input");
+    const cards = new Map();
+
+    function renderToCanvas(item, imgSrc) {
+      const { canvas, dl, status } = cards.get(item.key);
+      const ctx = canvas.getContext("2d", { alpha: false });
+      const img = new Image();
+
+      img.onload = () => {
+        const targetRatio = item.w / item.h;
+        const srcRatio = img.width / img.height;
+        let sx = 0, sy = 0, sw = img.width, sh = img.height;
+        if (srcRatio > targetRatio) {
+          sw = img.height * targetRatio;
+          sx = (img.width - sw) / 2;
+        } else {
+          sh = img.width / targetRatio;
+          sy = (img.height - sh) / 2;
+        }
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, item.w, item.h);
+        try {
+          dl.href = canvas.toDataURL("image/png");
+          dl.classList.remove("disabled");
+          status.textContent = `Ready (${item.w} × ${item.h} PNG)`;
+        } catch {
+          status.textContent = "Browser blocked file:// export — use 'Choose Images' above.";
+        }
+      };
+
+      img.onerror = () => {
+        status.textContent = "Use 'Choose Images' above to load this file.";
+      };
+
+      img.src = imgSrc;
+    }
+
+    for (const item of TARGETS) {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const row = document.createElement("div");
+      row.className = "row";
+
+      const title = document.createElement("strong");
+      title.textContent = item.label;
+
+      const dl = document.createElement("a");
+      dl.className = "btn disabled";
+      dl.textContent = `Download ${item.out}`;
+      dl.download = item.out;
+
+      row.append(title, dl);
+
+      const status = document.createElement("div");
+      status.className = "status";
+      status.textContent = "Waiting for image...";
+
+      const canvas = document.createElement("canvas");
+      canvas.width = item.w;
+      canvas.height = item.h;
+
+      card.append(row, status, canvas);
+      grid.appendChild(card);
+
+      cards.set(item.key, { canvas, dl, status });
+      renderToCanvas(item, item.src);
+    }
+
+    fileInput.addEventListener("change", () => {
+      for (const file of fileInput.files) {
+        const name = file.name.toLowerCase();
+        const match = TARGETS.find((t) => name.includes(t.key));
+        if (!match) continue;
+        const reader = new FileReader();
+        reader.onload = () => renderToCanvas(match, reader.result);
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>
