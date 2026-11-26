@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "GoPlaces — Personal Go Links",
+  "short_name": "GoPlaces",
+  "version": "1.0.0",
+  "description": "Turn go/<shortcut> into instant bookmarks. Create, edit, and sync personal go links right in your browser—no server needed.",
+  "permissions": [
+    "storage",
+    "declarativeNetRequest",
+    "webNavigation",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://go/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "GoPlaces — Go Links",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "omnibox": {
+    "keyword": "go"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

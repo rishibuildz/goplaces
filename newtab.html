@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Tab — GoPlaces</title>
+  <link rel="stylesheet" href="newtab.css" />
+</head>
+<body>
+  <div id="backdrop" class="backdrop"></div>
+  <div class="vignette"></div>
+
+  <main class="center-stage">
+    <div id="clock" class="clock"></div>
+
+    <form id="go-form" class="go-bar" autocomplete="off">
+      <span class="go-prefix">go/</span>
+      <input
+        id="go-input"
+        type="text"
+        placeholder="Type a shortcut (e.g. mail)..."
+        autofocus
+      />
+      <button type="submit" class="go-submit" title="Go">→</button>
+    </form>
+
+    <div id="shortcuts-grid" class="shortcuts-grid"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="place-bar">
+      <span id="place-label" class="place-label"></span>
+      <button id="next-place" type="button" class="pill-btn" title="Next place">
+        ↻ Next
+      </button>
+      <button id="mode-toggle" type="button" class="pill-btn" title="Switch between Daily and Every Tab rotation">
+        Daily
+      </button>
+    </div>
+
+    <div class="footer-right">
+      <a href="options.html" class="pill-btn">Manage Go Links</a>
+    </div>
+  </footer>
+
+  <script type="module" src="newtab.js"></script>
+</body>
+</html>

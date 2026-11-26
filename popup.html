@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GoPlaces</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="popup-body">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-icon">go/</div>
+      <span class="brand-title">GoPlaces</span>
+      <span id="link-count" class="badge">0</span>
+    </div>
+    <div class="header-actions">
+      <button id="open-dashboard" type="button" class="btn btn-ghost btn-sm" title="Open full dashboard &amp; import/export">
+        Dashboard
+      </button>
+    </div>
+  </header>
+
+  <main class="popup-main">
+    <form id="link-form" class="card form-stack" autocomplete="off">
+      <div class="input-group">
+        <span class="input-prefix">go/</span>
+        <input id="shortcut-input" type="text" placeholder="shortcut (e.g. mail)" required autofocus />
+      </div>
+
+      <input id="url-input" type="text" placeholder="https://example.com" required />
+
+      <div class="form-row">
+        <input id="note-input" type="text" placeholder="Optional label (e.g. Work Email)" maxlength="120" />
+        <button id="cancel-edit" type="button" class="btn hidden">Cancel</button>
+        <button id="save-btn" type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+
+    <div id="status-msg" class="status-msg" role="status"></div>
+
+    <div class="toolbar">
+      <input id="search-input" type="search" placeholder="Search shortcuts..." />
+    </div>
+
+    <div id="link-list" class="link-list"></div>
+  </main>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
